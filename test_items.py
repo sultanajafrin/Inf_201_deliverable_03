@@ -1,3 +1,5 @@
+# Quick manual test: creating a Weapon and rolling its damage.
+
 from dice import Dice
 from items import Weapon
 

@@ -1,3 +1,5 @@
+# Quick manual test: attacking with and without a weapon.
+
 from character import Character
 from dice import Dice
 from items import Weapon

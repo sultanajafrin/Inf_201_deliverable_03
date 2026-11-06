@@ -3,7 +3,7 @@
 
 from items import Weapon
 class Character:
-    """Represents a character in the RPG"""
+    """Represents a character in our mini RPG battle game"""
 
     def __init__(
         self,
@@ -13,7 +13,7 @@ class Character:
         weapon: Weapon | None = None,
     ) -> None:
         """
-        Initialise the Character
+        Create a new character.
 
         Args:
             name (str): The name of the character.
@@ -22,18 +22,18 @@ class Character:
             weapon (Weapon | None): Equipped weapon (default = None, no weapon)
         """
         self.name = name
-        self._hp = hp_max  # Note: _hp indicated private attribute
+        self._hp = hp_max  # The underscore means: only the class itself should change this
         self.hp_max = hp_max
         self.damage = damage
-        self.weapon = weapon
+        self.weapon = weapon # none means the character fights without a weapon
 
     def attack(self, target) -> None:
         """Attack and deal damage to target character"""
         if self.weapon is not None:
             damage = self.weapon.roll_damage()  # Weapon damage comes from a dice roll
         else:
-            damage = self.damage  # No weapon: use the default base damage
-        target.take_damage(damage)
+            damage = self.damage  # No weapon, so use the normal damage
+        target.take_damage(damage) # We ask the target to lower its own HP
     
     def take_damage(self, amount: int) -> None:
         """Reduce this character's own HP, never going below 0"""
@@ -46,23 +46,23 @@ class Character:
         self._hp = min(self._hp, self.hp_max)  # HP cannot go above the maximum
     
     def introduce(self) -> None:
-        """Creates string that introduces character"""
+        """Print a short greeting with the character`s name"""
         print(f"Hi, my name is {self.name}!")
 
     def __repr__(self) -> str:
-        """Representation of character object"""
+        """Short text for developers, shown when we inspect the object."""
         return f"<Character name={self.name} hp={self.hp} damage={self.damage}>)"
 
     def __str__(self) -> str:
-        """String representation of character object"""
+        """Readable text, shown when we use print() on the object."""
         return f"Character: {self.name} with {self.hp} HP and {self.damage} damage"
 
     @property
     def hp(self) -> int:
-        """Public read-only property to inspect HP without allowing direct, unsafe edits."""
+        """Read-only HP. We can look at it, but not change it directly."""
         return self._hp
 
     @property
     def is_alive(self) -> bool:
-        """Public read-only property: True if the character has HP left"""
+        """Read-only.True while the character has more than 0 HP."""
         return self._hp > 0

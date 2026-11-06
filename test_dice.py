@@ -1,3 +1,5 @@
+# Quick manual test: creating a dice and the minimum of 2 sides.
+
 from dice import Dice
 
 d2 = Dice(sides=2)

@@ -1,12 +1,14 @@
+# Dice class for the battle simulator
+
 import random
 
 
 class Dice:
-    """Represents an n-sided dice"""
+    """A dice with any number of sides, used to make damage random"""
 
     def __init__(self, sides: int = 6) -> None:
         """
-        Initialise the Dice
+        Create a new dice.
 
         Args:
             sides (int): Number of sides on the dice (default = 6, minimum = 2)
@@ -15,6 +17,7 @@ class Dice:
             ValueError: If sides is less than 2
         """
         if sides < 2:
+            # A dice with fewer than 2 sides makes no sense, so we stop here.
             raise ValueError("A dice must have at least 2 sides")
         self.sides = sides
 
@@ -27,5 +30,5 @@ class Dice:
         return f"Dice(sides={self.sides})"
 
     def __call__(self) -> int:
-        """Allow the dice to be rolled by calling it: d20()"""
+        """Let us roll the dice by calling it, so d20() does the same as d20.roll()."""
         return self.roll()
