@@ -1,2 +1,14 @@
+# Virtual environment (everyone creates their own)
 .venv/
+
+# Files Python creates automatically
 __pycache__/
+*.pyc
+
+# Notebook autosave folders
+.ipynb_checkpoints/
+
+# Editor and system files
+.vscode/
+.DS_Store
+Thumbs.db
