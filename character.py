@@ -66,3 +66,67 @@ class Character:
     def is_alive(self) -> bool:
         """Read-only.True while the character has more than 0 HP."""
         return self._hp > 0
+
+class Warrior(Character):
+    """A defensive character: armor blocks part of every hit it receives"""
+
+    def __init__(self, name, hp_max=100, damage=10, weapon=None, armor=5):
+        """
+        Create a new warrior.
+
+        Args:
+            name: The name of the warrior.
+            hp_max: The most HP the warrior can have (default = 100).
+            damage: Damage dealt per attack without a weapon (default = 10).
+            weapon: The weapon the warrior holds, or None (default = None).
+            armor: How much damage is blocked per hit (default = 5).
+        """
+        # Character already knows how to set up name, HP, damage and weapon,
+        # so we hand that part over instead of writing it again
+        super().__init__(name, hp_max, damage, weapon)
+        # The only new thing a warrior has compared to a normal character
+        self.armor = armor
+
+    def take_damage(self, amount):
+        """Reduce the incoming damage by armor, then take what is left."""
+        # max(..., 0) makes sure weak hits give 0 damage, never negative
+        # damage (which would heal the warrior by mistake)
+        reduced = max(amount - self.armor, 0)
+        # Character.take_damage lowers the HP and keeps it at 0 or above
+        super().take_damage(reduced)
+
+
+class Mage(Character):
+    """A character that fights with spells, which cost mana"""
+
+    def __init__(self, name, hp_max=100, damage=10, weapon=None, mana=30, mana_max=30):
+        """
+        Create a new mage.
+
+        Args:
+            name: The name of the mage.
+            hp_max: The most HP the mage can have (default = 100).
+            damage: Damage of a normal attack without a weapon (default = 10).
+            weapon: The weapon the mage holds, or None (default = None).
+            mana: The mana the mage has right now (default = 30).
+            mana_max: The most mana the mage can have (default = 30).
+        """
+        # Let Character set up name, HP, damage and weapon
+        super().__init__(name, hp_max, damage, weapon)
+        # The two new things a mage has: mana now, and the maximum
+        self.mana = mana
+        self.mana_max = mana_max
+
+    def attack(self, target):
+        """Cast a spell if there is enough mana, otherwise attack normally."""
+        if self.mana >= 10:
+            # Spell: costs 10 mana and deals double damage.
+            # It does not use the weapon, only the mage's own damage value.
+            self.mana -= 10
+            target.take_damage(self.damage * 2)
+        else:
+            # Not enough mana: do a normal attack. Character.attack uses
+            # the weapon if the mage has one.
+            super().attack(target)
+            # Resting gives back 5 mana, but never more than the maximum
+            self.mana = min(self.mana + 5, self.mana_max)
