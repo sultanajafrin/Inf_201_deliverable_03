@@ -1,10 +1,15 @@
-# Dice class for the battle simulator
+# A dice class that makes damage random in the battle simulator.
+
 
 import random
 
 
 class Dice:
-    """A dice with any number of sides, used to make damage random"""
+    """
+    A dice with any number of sides. A dice with n sides gives a random whole number 
+    from 1 to n when it is rolled. it can be rolled with roll() or by calling it, e.g d20()
+    
+    """
 
     def __init__(self, sides: int = 6) -> None:
         """
@@ -31,4 +36,5 @@ class Dice:
 
     def __call__(self) -> int:
         """Let us roll the dice by calling it, so d20() does the same as d20.roll()."""
+        # We reuse roll(), so the rolling logic lives in only one place
         return self.roll()

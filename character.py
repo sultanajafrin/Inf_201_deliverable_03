@@ -1,9 +1,20 @@
 # Object-oriented game simulator
 # Turid Torheim, NMBU, 2026
 
+"""
+Characters for a mini RPG battle simulator. 
+Contains the character class and its subclass warrior and mage
+
+"""
+
+
 from items import Weapon
 class Character:
-    """Represents a character in our mini RPG battle game"""
+    """
+    A character in the battle game.
+    A character has a name, hit point (HP) and a base damage.
+    It can also hold a weapon. HP is kept between 0 and hp_max.
+    """
 
     def __init__(
         self,
@@ -17,9 +28,9 @@ class Character:
 
         Args:
             name (str): The name of the character.
-            hp_max (int): Max hit points (default = 100)
-            damage (int): Damage delt when character attacks (default = 10)
-            weapon (Weapon | None): Equipped weapon (default = None, no weapon)
+            hp_max (int): The most HP the chara ter can have (default = 100)
+            damage (int): Damage delt per attack without a weapon (default = 10)
+            weapon (Weapon | None): The weapon the character holds (default = None, no weapon)
         """
         self.name = name
         self._hp = hp_max  # The underscore means: only the class itself should change this
@@ -28,25 +39,45 @@ class Character:
         self.weapon = weapon # none means the character fights without a weapon
 
     def attack(self, target) -> None:
-        """Attack and deal damage to target character"""
+        """
+        Attack another character.
+        A weapon gives random damage from its dice.
+        without a weapon the character deals its fixed base damage
+        
+        Args: 
+            target(character): The character that is attacked.            
+            
+        """
+
         if self.weapon is not None:
-            damage = self.weapon.roll_damage()  # Weapon damage comes from a dice roll
+            damage = self.weapon.roll_damage()  
         else:
-            damage = self.damage  # No weapon, so use the normal damage
-        target.take_damage(damage) # We ask the target to lower its own HP
+            damage = self.damage  
+        # we ask the terget to lower its own HP, we never touch target._hp
+        target.take_damage(damage)
     
     def take_damage(self, amount: int) -> None:
-        """Reduce this character's own HP, never going below 0"""
+        """
+        Lower this character's pwn HP.
+        Args:
+            amount(int): How much damage to take. Hp never goes below 0.
+        """
         self._hp -= amount
-        self._hp = max(self._hp, 0)  # HP cannot end up lower than 0    
+        self._hp = max(self._hp, 0)  # Stops HP from becoming negative 
 
     def heal(self, amount: int) -> None:
-        """Increase this character's own HP, never going above hp_max"""
+        """
+        Raise this character's own HP.
+
+        Args: 
+            amount (int): How many HP to restore. HP never goes above hp_max.
+        
+        """
         self._hp += amount
-        self._hp = min(self._hp, self.hp_max)  # HP cannot go above the maximum
+        self._hp = min(self._hp, self.hp_max)  
     
     def introduce(self) -> None:
-        """Print a short greeting with the character`s name"""
+        """Print a short greeting with the character's name."""
         print(f"Hi, my name is {self.name}!")
 
     def __repr__(self) -> str:
@@ -59,12 +90,16 @@ class Character:
 
     @property
     def hp(self) -> int:
-        """Read-only HP. We can look at it, but not change it directly."""
+        """Read-only HP. We can look at it, but not change it directly.
+        
+        Returns: 
+            int: The current hit points.
+        """
         return self._hp
 
     @property
     def is_alive(self) -> bool:
-        """Read-only.True while the character has more than 0 HP."""
+        """Read-only.Tells if the character is still in the fight."""
         return self._hp > 0
 
 class Warrior(Character):
@@ -88,9 +123,12 @@ class Warrior(Character):
         self.armor = armor
 
     def take_damage(self, amount):
-        """Reduce the incoming damage by armor, then take what is left."""
+        """
+        Take damage after armor has blocked part of it.
+        Args:
+            amount (int) : The damage before armor is applied.
+        """
         # max(..., 0) makes sure weak hits give 0 damage, never negative
-        # damage (which would heal the warrior by mistake)
         reduced = max(amount - self.armor, 0)
         # Character.take_damage lowers the HP and keeps it at 0 or above
         super().take_damage(reduced)
@@ -118,15 +156,17 @@ class Mage(Character):
         self.mana_max = mana_max
 
     def attack(self, target):
-        """Cast a spell if there is enough mana, otherwise attack normally."""
+        """
+        Attack with a spell if there is enough mana, otherwise attack normally.
+        with at least 10 mana the mage soends 10 and deals double damage. the 
+        spell ignors the weapon. with less mana it makes a normal attack and regains 5 mana.
+        """
         if self.mana >= 10:
             # Spell: costs 10 mana and deals double damage.
             # It does not use the weapon, only the mage's own damage value.
             self.mana -= 10
             target.take_damage(self.damage * 2)
         else:
-            # Not enough mana: do a normal attack. Character.attack uses
-            # the weapon if the mage has one.
             super().attack(target)
             # Resting gives back 5 mana, but never more than the maximum
             self.mana = min(self.mana + 5, self.mana_max)
