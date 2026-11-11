@@ -30,7 +30,7 @@ class Character:
             name (str): The name of the character.
             hp_max (int): The most HP the chara ter can have (default = 100)
             damage (int): Damage delt per attack without a weapon (default = 10)
-            weapon (Weapon | None): The weapon the character holds (default = None, no weapon)
+            weapon : The weapon the character holds (default = None, no weapon)
         """
         self.name = name
         self._hp = hp_max  # The underscore means: only the class itself should change this
